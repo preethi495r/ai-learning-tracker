@@ -8,7 +8,7 @@ import { NextRequest, NextResponse } from "next/server";
 export const runtime = "nodejs";
 
 const TEMPLATE_ENV: Record<string, "FRONTEND_TEMPLATE" | "BI_TEMPLATE"> = {
-  frontendengineer: "FRONTEND_TEMPLATE",
+  feengineer: "FRONTEND_TEMPLATE",
   biengineer: "BI_TEMPLATE",
 };
 

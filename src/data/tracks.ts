@@ -18,7 +18,7 @@ export type { Lesson, Resource, ResourceType } from "./curriculum";
 // The single completion contract, shared by both tracks: `${repoPath}/DONE.md` exists.
 export const COMPLETION_MARKER = biMarker;
 
-export type TrackSlug = "frontendengineer" | "biengineer";
+export type TrackSlug = "feengineer" | "biengineer";
 
 export interface PassInfo {
   title: string;
@@ -38,7 +38,7 @@ export interface Track {
 
 export const tracks: Track[] = [
   {
-    slug: "frontendengineer",
+    slug: "feengineer",
     label: "Full-Stack + AI",
     headline: "Your Full-Stack + AI journey",
     lessons: feLessons,
