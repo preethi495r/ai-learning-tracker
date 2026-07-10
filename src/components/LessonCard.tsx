@@ -12,7 +12,7 @@ export function LessonCard({
   return (
     <Link
       href={`/${slug}/lesson/${lesson.id}`}
-      className={`block rounded-xl border bg-white p-4 transition hover:border-accent hover:shadow-sm ${
+      className={`block rounded-xl border bg-white p-4 shadow-card transition duration-200 hover:-translate-y-0.5 hover:border-accent hover:shadow-lift ${
         lesson.isNext ? "border-accent ring-1 ring-accent/20" : "border-slate-200"
       }`}
     >
