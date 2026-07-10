@@ -4,7 +4,9 @@ Context for Claude Code. Read `WEBSITE_SPEC.md` for the full brief; this is the 
 
 ## What this is
 
-A learning-tracker website for **two learners**, one track each, with shareable landing pages (`/frontendengineer`, `/biengineer`). A learner connects GitHub on her landing page; the app authorizes her via OAuth and **auto-creates her learning repo from a template**. Progress is then tracked from what she pushes.
+A learning-tracker website with **three career-transition tracks**, each a shareable landing page (`/feengineer`, `/biengineer`, `/daengineer`), plus a **home page** (`/`) that explains the tracks and a **quiz recommender** (`/find-your-path`). A learner connects GitHub on her landing page; the app authorizes her via OAuth and **auto-creates her learning repo from a template**. Progress is then tracked from what she pushes.
+
+> This started as a two-learner build; it has since grown to three tracks + a home/quiz. See **Current state & decisions** at the bottom for everything added after the original spec.
 
 ## Who this is for (important)
 
@@ -34,26 +36,34 @@ Next.js (App Router) + TypeScript + Tailwind. Serverless Route Handlers (Node ru
 src/
   data/
     curriculum.ts        # biengineer track content + types
-    curriculum-wife.ts   # frontendengineer track content
-    tracks.ts            # composes both into Track[]
-  lib/github.ts          # fetchRepoPaths() + computeCompletion()  (public reads)
+    curriculum-wife.ts   # feengineer track content
+    curriculum-da.ts     # daengineer track content
+    tracks.ts            # composes all three into Track[] (getTrack, orderedLessons, lessonsByPass)
+  lib/github.ts          # fetchRepoPaths() + computeCompletion()  (public reads; retries 409 while a new repo initializes)
   hooks/useConnection.ts # localStorage connection state per track + signOut
   hooks/useProgress.ts   # resolves connection, fetches tree, computes states
-  app/api/auth/login/route.ts
+  app/api/auth/login/route.ts     # VALID_TRACKS set lists the 3 slugs
   app/api/auth/callback/route.ts
-  app/api/repo/generate/route.ts
+  app/api/repo/generate/route.ts  # TEMPLATE_ENV map: slug -> *_TEMPLATE env key
+  app/page.tsx                   # HOME: hero + 3 persona cards + Find-your-path card + 3-step strip
+  app/find-your-path/page.tsx    # QUIZ recommender (client, no backend). Static route beats /[track]
   app/[track]/page.tsx           # connect card OR dashboard
   app/[track]/lesson/[id]/page.tsx
   components/            # ConnectCard, GoLocalPanel, ConnectionBadge, ProgressBar,
                         # LessonCard, StatusPill, ResourceList, RefreshButton, CopyCommand
 ```
 
+> The repo-ROOT `curriculum.ts` / `curriculum-wife.ts` are stale original-delivery copies — the app ONLY reads `src/data/*`. Edit content in `src/data/`. (Root copies can be deleted; left in place for now.)
+
 ## Track config
 
-| slug              | curriculum          | default repo name        | template env key    |
-| ----------------- | ------------------- | ------------------------ | ------------------- |
-| frontendengineer  | curriculum-wife.ts  | fullstack-ai-journey     | FRONTEND_TEMPLATE   |
-| biengineer        | curriculum.ts       | ai-engineering-journey   | BI_TEMPLATE         |
+| slug          | curriculum          | default repo name        | template env key    |
+| ------------- | ------------------- | ------------------------ | ------------------- |
+| feengineer    | curriculum-wife.ts  | fullstack-ai-journey     | FRONTEND_TEMPLATE   |
+| biengineer    | curriculum.ts       | ai-engineering-journey   | BI_TEMPLATE         |
+| daengineer    | curriculum-da.ts    | data-analyst-ai-journey  | DA_TEMPLATE         |
+
+> Slug note: the frontend track slug was renamed `frontendengineer` → **`feengineer`** (old path 404s). `daengineer` (Data Analyst → AI Engineer) was added later. `getTrack`/`tracks` live in `src/data/tracks.ts` (aliased imports of the three curriculum files).
 
 ## Env vars (Vercel, server-only unless noted)
 
@@ -61,10 +71,13 @@ src/
 GITHUB_CLIENT_ID
 GITHUB_CLIENT_SECRET
 OAUTH_STATE_SECRET
-FRONTEND_TEMPLATE=<you>/fullstack-ai-journey-template
-BI_TEMPLATE=<you>/ai-engineering-journey-template
-# OAUTH_REDIRECT_URI optional; otherwise derive from request origin
+FRONTEND_TEMPLATE=harigovind-s-menon/fullstack-ai-journey-template
+BI_TEMPLATE=harigovind-s-menon/ai-engineering-journey-template
+DA_TEMPLATE=harigovind-s-menon/data-analyst-ai-journey-template
+OAUTH_REDIRECT_URI=https://ai-tracker-eight-ebon.vercel.app/api/auth/callback
 ```
+
+All of the above are set in Vercel (Production) and mirrored in local `.env.local`. `OAUTH_REDIRECT_URI` is pinned (not derived) so OAuth works regardless of which Vercel alias is hit — it MUST equal the GitHub OAuth App's Authorization callback URL.
 
 ## Conventions
 
@@ -76,3 +89,60 @@ BI_TEMPLATE=<you>/ai-engineering-journey-template
 ## When unsure
 
 Prefer the simplest thing that satisfies the completion rule and keeps progress reads public. If a feature would need a database, a persistent server session, or private-repo reads, it's out of scope — flag it instead of building it.
+
+---
+
+# Current state & decisions (resume here)
+
+Everything below reflects work done after the original spec. Read it before resuming.
+
+## Live deployment
+- **Owner GitHub account:** `harigovind-s-menon` (owns the app repo + the 3 template repos). This is the *builder*, not a learner — never wire it into progress/repo-creation logic.
+- **App repo (private):** `github.com/harigovind-s-menon/ai-tracker`.
+- **Vercel project:** `harigovind-ss-projects/ai-tracker` (a *different* Vercel account/team, `harigovindsmenon14-7798`). Git-connected → **push to `main` auto-deploys to Production**.
+- **Production domain (stable alias):** `https://ai-tracker-eight-ebon.vercel.app`
+  - Share links: `/feengineer`, `/biengineer`, `/daengineer`, or the home `/`. Quiz at `/find-your-path`.
+- **GitHub OAuth App** client id `Ov23lifcOFLWUMynMv8E`; its Authorization callback URL is set to `https://ai-tracker-eight-ebon.vercel.app/api/auth/callback` and MUST match `OAUTH_REDIRECT_URI`. (One callback per OAuth App — changing the domain means updating both the OAuth App and the env var.)
+
+## Deploying / CLI gotchas (corporate-proxy machine)
+- Preferred deploy: **just `git push`** (auto-deploys). 
+- Manual deploy needs the Vercel CLI **and** a CA bundle (Node rejects the corporate MITM cert otherwise):
+  ```
+  export NODE_EXTRA_CA_CERTS=/Users/<you>/.system-ca.pem
+  vercel --prod --yes        # vercel binary: ~/.nvm/versions/node/v24.15.0/bin/vercel
+  ```
+  `~/.system-ca.pem` was built from the macOS keychains (`security find-certificate -a -p ...`). Every `vercel` invocation needs `NODE_EXTRA_CA_CERTS`. `vercel ls`'s status column renders oddly through the CLI (`UNKNOWN`); verify deploys by curling the live URL instead.
+
+## ⚠️ Git commit-author gotcha (caused failed deploys)
+Vercel's git integration attributes each deploy to the **commit author email** and rejects authors not connected to the Vercel account. Early commits used a bogus `menon@users.noreply.github.com` and were rejected ("deploy from a different account").
+- **Fix in place:** repo git config is set to the real identity — `user.name=harigovind-s-menon`, `user.email=25458596+harigovind-s-menon@users.noreply.github.com`. All new commits must use this. Don't pass a made-up `-c user.email`.
+- **Outstanding (optional):** the very first commit on `origin/main` still carries the old placeholder author. Harmless (never HEAD, never deployed). A local history-scrub (`git filter-branch`) was done but the force-push to remote was declined, so remote history is un-scrubbed. To finish: `git push --force origin main` from a scrubbed local — otherwise leave it.
+
+## Template repos (public, "Template repository" flag ON, under harigovind-s-menon)
+- `fullstack-ai-journey-template` → FRONTEND_TEMPLATE (feengineer)
+- `ai-engineering-journey-template` → BI_TEMPLATE (biengineer)
+- `data-analyst-ai-journey-template` → DA_TEMPLATE (daengineer)
+- Each has one folder per lesson with a `notes.md` placeholder — **never `DONE.md`** (that would mark lessons complete). Adding a lesson = add its folder+notes.md to the matching template (via `gh api PUT .../contents/<path>/notes.md`). Zsh strips PATH inside loops here — set `export PATH=/opt/homebrew/bin:/usr/bin:/bin` and avoid functions, or run a `bash scriptfile`.
+
+## Curriculum conventions (important for edits)
+- **`order` (integer) drives UI ordering**, not the folder name. So you can INSERT a lesson by giving it a new `order` and a fresh `repoPath` folder number **without renumbering existing folders** (avoids renaming template folders / breaking completion keys). Existing lesson `repoPath`s are stable identifiers — don't rename them.
+- Lesson counts (as of now): **biengineer 17, feengineer 17, daengineer 16.** Never hardcode counts — derive from data.
+- Content added this session, across tracks:
+  - **Pydantic** in Python core (biengineer/daengineer); Zod called out as its equivalent (feengineer).
+  - **ReAct** made explicit in the simple-agent lessons (+ arxiv 2210.03629).
+  - **FastMCP** is now the spine of the Python MCP lessons; noted as the Python option in the TS track.
+  - New **APIs vs MCP** compare/contrast lesson — all 3 tracks.
+  - New **LangChain & LangGraph** (Py) / **LangGraph.js & LangChain.js** (TS) lesson incl. sub-agents/multi-agent — all 3 tracks.
+  - New **n8n low-code GenAI workflows** lesson — all 3 tracks.
+  - Sub-agents added to Claude Code + database/data-agent lessons.
+- **daengineer** persona: Data Analyst with Python + basic ML (classification/sklearn), lacking prompting & AI-workflow experience. Track leans on that: dedicated Prompt Engineering lesson, a "Classical ML → LLMs" bridge, a Data Analysis Agent capstone, evals as their edge, Streamlit-first deploy.
+
+## Home + quiz (design decisions)
+- **Design system:** `globals.css` soft radial-gradient canvas; `tailwind.config.ts` adds `shadow-card`/`shadow-lift`, `animate-fade-up`, system font stack. Keep it clean/minimal (owner preference) — lift via subtle shadow + hover, not clutter.
+- **Per-track color identity:** feengineer=sky, biengineer=violet, daengineer=emerald, quiz/helper=amber. Class strings are written out in full (Tailwind JIT can't see dynamic concatenation).
+- **Persona cards** state who-it's-for + starting assumptions + 3 highlights. Per owner feedback, the **current role and "→ AI Engineer" are equal weight** (both `text-lg` bold) — do not shrink the current-role back to a small eyebrow.
+- **Quiz** (`/find-your-path`): 4 questions, each option adds points to `{feengineer, biengineer, daengineer}`; highest wins, shows a runner-up. Scoring lives in that one client file — tweak weights there. It is NOT a curriculum track (not in `tracks`).
+
+## Known minor items
+- `favicon.ico` 404 in console (cosmetic; no favicon added yet).
+- Root-level `curriculum*.ts` copies are stale (see structure note).
