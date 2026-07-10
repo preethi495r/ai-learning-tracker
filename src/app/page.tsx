@@ -83,12 +83,13 @@ export default function Home() {
               {c.icon}
             </div>
             <div className="mt-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+              <h2 className="text-lg font-bold leading-snug text-slate-900">
                 {c.from}
-              </p>
-              <h2 className="mt-0.5 flex items-center gap-1.5 text-lg font-bold text-slate-900">
-                <span className={c.accent} aria-hidden>→</span> {c.to}
               </h2>
+              <p className="mt-0.5 flex items-center gap-1.5 text-lg font-bold leading-snug text-slate-900">
+                <span className={c.accent} aria-hidden>→</span>
+                {c.to}
+              </p>
             </div>
             <p className="mt-3 text-sm text-slate-600">{c.persona}</p>
             <ul className="mt-4 flex flex-col gap-1.5">
