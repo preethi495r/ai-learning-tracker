@@ -16,11 +16,18 @@ const CHOICES = [
     blurb:
       "Turn your data instincts into AI engineering — Python, LLMs, RAG, agents, and portfolio-grade projects.",
   },
+  {
+    href: "/daengineer",
+    from: "Data Analyst",
+    to: "AI Engineer",
+    blurb:
+      "You have Python and basic ML. Add serious prompting, LLM APIs, agents, and GenAI workflows — and ship real AI projects.",
+  },
 ];
 
 export default function Home() {
   return (
-    <main className="mx-auto flex min-h-screen max-w-2xl flex-col justify-center px-5 py-16">
+    <main className="mx-auto flex min-h-screen max-w-4xl flex-col justify-center px-5 py-16">
       <header className="mb-10 text-center">
         <h1 className="text-3xl font-semibold text-slate-900">
           Your learning journey, tracked
@@ -32,7 +39,7 @@ export default function Home() {
         </p>
       </header>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {CHOICES.map((c) => (
           <Link
             key={c.href}

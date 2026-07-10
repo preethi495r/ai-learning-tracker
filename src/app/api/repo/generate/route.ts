@@ -7,9 +7,13 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
-const TEMPLATE_ENV: Record<string, "FRONTEND_TEMPLATE" | "BI_TEMPLATE"> = {
+const TEMPLATE_ENV: Record<
+  string,
+  "FRONTEND_TEMPLATE" | "BI_TEMPLATE" | "DA_TEMPLATE"
+> = {
   feengineer: "FRONTEND_TEMPLATE",
   biengineer: "BI_TEMPLATE",
+  daengineer: "DA_TEMPLATE",
 };
 
 const GH = { Accept: "application/vnd.github+json" };

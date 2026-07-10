@@ -43,7 +43,7 @@ export const PASSES = {
 
 // Her differentiator to keep in mind throughout: most AI apps have poor UX and worse
 // accessibility. A frontend engineer who ships accessible, fast, well-designed AI
-// interfaces end-to-end is rare and valuable. Lean into it (esp. lessons 5 and 13).
+// interfaces end-to-end is rare and valuable. Lean into it (esp. lessons 5 and 15).
 
 export const lessons: Lesson[] = [
   // ────────────────────────────── PASS 1 ──────────────────────────────
@@ -124,12 +124,12 @@ export const lessons: Lesson[] = [
     repoPath: "pass-1/04-llm-apis-ai-sdk",
     title: "LLM APIs & the AI SDK",
     objective:
-      "Call LLMs from TypeScript the idiomatic way. The Vercel AI SDK will be your main tool — learn its core before its UI hooks.",
+      "Call LLMs from TypeScript the idiomatic way. The Vercel AI SDK will be your main tool — learn its core before its UI hooks. Zod here plays the role Pydantic plays in Python: the schema that makes tool calls and structured output reliable.",
     topics: [
       "Calling LLMs server-side (why a key must never hit the client)",
       "AI SDK Core: generateText, streamText, generateObject/streamObject",
       "Provider abstraction (Anthropic / OpenAI / others) — swap models in a line",
-      "Tool calling and structured output with Zod schemas",
+      "Tool calling and structured output with Zod schemas (typed, validated results)",
       "Tokens, context windows, temperature; prompt basics",
     ],
     build:
@@ -137,6 +137,7 @@ export const lessons: Lesson[] = [
     resources: [
       { title: "AI SDK — Introduction & Core (docs)", url: "https://ai-sdk.dev/docs/introduction", type: "docs" },
       { title: "Vercel Academy — AI SDK course (free, official)", url: "https://vercel.com/academy/ai-sdk", type: "course" },
+      { title: "Zod — schema validation (docs)", url: "https://zod.dev/", type: "docs", note: "The AI SDK uses Zod for tool args & structured output" },
       { title: "Anthropic — Tool use (function calling)", url: "https://docs.claude.com/en/docs/build-with-claude/tool-use/overview", type: "docs" },
     ],
   },
@@ -190,21 +191,46 @@ export const lessons: Lesson[] = [
     pass: 1,
     order: 7,
     repoPath: "pass-1/07-simple-agent-ts",
-    title: "Simple Agent (TypeScript)",
+    title: "Simple Agent & the ReAct Loop (TypeScript)",
     objective:
-      "Understand the agent loop by building a small multi-step, tool-using flow — see the mechanics before reaching for heavier frameworks.",
+      "Understand the agent loop by building a small ReAct flow — reason → act → observe — with the AI SDK. See the mechanics before reaching for heavier frameworks.",
     topics: [
-      "The agent loop: plan → act → observe → repeat",
-      "Multi-step tool use with the AI SDK (stopWhen / step control)",
+      "The agent loop = the ReAct pattern: reason → act (call a tool) → observe (feed the result back) → repeat",
+      "Multi-step tool use with the AI SDK (stopWhen / step control) — this IS the ReAct loop, managed for you",
       "Wiring a real tool (e.g. query your DB, call an API)",
       "Guardrails: step limits, validation, cost awareness",
+      "Inspecting steps: reading the model's reasoning and each tool call",
     ],
     build:
-      "A tiny agent that answers a question by choosing and calling 1–2 tools (e.g. a DB lookup + a calculation), with a hard step limit.",
+      "A tiny ReAct agent that answers a question by choosing and calling 1–2 tools (e.g. a DB lookup + a calculation), with a hard step limit, logging each reason/act/observe step.",
     resources: [
       { title: "AI SDK — Agents & tool calling (docs)", url: "https://ai-sdk.dev/docs/foundations/agents", type: "docs" },
       { title: "Anthropic — Building effective agents", url: "https://www.anthropic.com/research/building-effective-agents", type: "article", note: "Best conceptual read on agents" },
-      { title: "LangGraph.js — docs (for later, heavier orchestration)", url: "https://langchain-ai.github.io/langgraphjs/", type: "docs" },
+      { title: "ReAct: Synergizing Reasoning and Acting in LLMs (paper)", url: "https://arxiv.org/abs/2210.03629", type: "article", note: "The origin of the reason+act loop" },
+    ],
+  },
+  {
+    id: "apis-vs-mcp",
+    pass: 1,
+    order: 8,
+    repoPath: "pass-1/08-apis-vs-mcp",
+    title: "APIs vs MCP: When to Use Which",
+    objective:
+      "You've built REST Route Handlers (lesson 1) and consumed LLM tools (lesson 7). Now understand MCP and contrast it with a plain API: both expose capabilities, but to different consumers, with different contracts. Know when to reach for each — you'll build an MCP server in Pass 2.",
+    topics: [
+      "The core difference: a REST API is called by code a developer writes; an MCP tool is discovered and called by the model itself at runtime",
+      "Contracts & discovery: OpenAPI/human docs (for developers) vs self-describing MCP tool schemas the LLM reads and reasons over",
+      "Transport & shape: HTTP verbs + URLs + status codes vs MCP tools/resources/prompts over stdio or HTTP",
+      "Where each fits: your Next.js API for the frontend/browser, an MCP server for assistants and agents",
+      "The wrap pattern: exposing the same capability both as an API route and as an MCP tool",
+    ],
+    build:
+      "Write COMPARISON.md in this folder: take one endpoint from your lesson-1 API and sketch how you'd expose the same capability as an MCP tool, with a short table of when you'd choose an API vs an MCP server.",
+    resources: [
+      { title: "Anthropic — Introducing the Model Context Protocol", url: "https://www.anthropic.com/news/model-context-protocol", type: "article", note: "Why MCP exists, vs bespoke integrations" },
+      { title: "MCP — Architecture & core concepts", url: "https://modelcontextprotocol.io/docs/concepts/architecture", type: "docs" },
+      { title: "OpenAPI Specification — a machine-readable API contract", url: "https://www.openapis.org/", type: "docs" },
+      { title: "AI SDK — using MCP tools", url: "https://ai-sdk.dev/docs/ai-sdk-core/mcp-tools", type: "docs", note: "Consuming MCP servers from your TS app" },
     ],
   },
 
@@ -212,21 +238,22 @@ export const lessons: Lesson[] = [
   {
     id: "claude-code-fullstack",
     pass: 2,
-    order: 8,
+    order: 9,
     repoPath: "pass-2/01-claude-code-fullstack",
     title: "Claude Code for Full-Stack & Agentic Work",
     objective:
       "You already use Claude Code. Level it up for backend and agentic work you're newer to — and, crucially, learn to review generated backend/DB/auth code as critically as you review UI.",
     topics: [
       "CLAUDE.md for a full-stack repo; plan mode; scoping larger tasks",
-      "Custom slash commands; subagents for multi-part work",
+      "Custom slash commands; subagents for multi-part work (delegating scoped tasks to fresh contexts)",
       "Driving DB/schema/auth changes and reading them critically",
       "Using MCP servers to extend Claude Code",
     ],
     build:
-      "Write a CLAUDE.md for a full-stack repo and use Claude Code to add a non-trivial backend feature (new table + API + protected UI). Note what you had to correct.",
+      "Write a CLAUDE.md for a full-stack repo and use Claude Code (with a subagent for one sub-task) to add a non-trivial backend feature (new table + API + protected UI). Note what you had to correct.",
     resources: [
       { title: "Anthropic — Claude Code best practices", url: "https://www.anthropic.com/engineering/claude-code-best-practices", type: "article" },
+      { title: "Claude Code — Subagents (docs)", url: "https://code.claude.com/docs/en/sub-agents", type: "docs" },
       { title: "Using CLAUDE.md files (Anthropic blog)", url: "https://claude.com/blog/using-claude-md-files", type: "article" },
       { title: "ClaudeLog — community tips & mechanics", url: "https://claudelog.com/", type: "article" },
     ],
@@ -234,7 +261,7 @@ export const lessons: Lesson[] = [
   {
     id: "production-fullstack-ai-app",
     pass: 2,
-    order: 9,
+    order: 10,
     repoPath: "pass-2/02-production-fullstack-ai-app",
     title: "Production Full-Stack AI App",
     objective:
@@ -256,7 +283,7 @@ export const lessons: Lesson[] = [
   {
     id: "production-rag-ts",
     pass: 2,
-    order: 10,
+    order: 11,
     repoPath: "pass-2/03-production-rag-ts",
     title: "Production RAG (TypeScript)",
     objective:
@@ -276,53 +303,80 @@ export const lessons: Lesson[] = [
     ],
   },
   {
+    id: "langgraph-langchain-ts",
+    pass: 2,
+    order: 12,
+    repoPath: "pass-2/08-langgraph-langchain-ts",
+    title: "LangGraph.js & LangChain.js (Agent Frameworks)",
+    objective:
+      "Graduate from the AI SDK's managed loop to explicit orchestration when flows get complex. Learn LangChain.js for building blocks and LangGraph.js for controllable, stateful, multi-step and multi-agent graphs — the tools behind the agentic feature you build next.",
+    topics: [
+      "When a framework earns its place: the AI SDK is enough for most flows; reach for LangGraph when you need explicit state, branching, and persistence",
+      "LangGraph.js core: nodes + edges, typed state (a Zod/TypeScript schema), and the compiled graph",
+      "Rebuilding your ReAct agent as a graph; the prebuilt ReAct agent vs a custom graph",
+      "Control: conditional edges, loops with a step budget, checkpointing, human-in-the-loop interrupts",
+      "Sub-agents / multi-agent patterns: supervisor and hand-off architectures, and when to split one agent into several",
+      "Tracing with LangSmith to see every reason/act/observe step",
+    ],
+    build:
+      "Rebuild your Pass 1 ReAct agent as a LangGraph.js graph with typed state and a step limit, then add one sub-agent (a supervisor that hands a sub-task to a specialist). Trace it in LangSmith.",
+    resources: [
+      { title: "LangGraph.js — documentation", url: "https://langchain-ai.github.io/langgraphjs/", type: "docs" },
+      { title: "LangChain.js — Introduction (docs)", url: "https://js.langchain.com/docs/introduction/", type: "docs" },
+      { title: "LangGraph.js — Multi-agent concepts", url: "https://langchain-ai.github.io/langgraphjs/concepts/multi_agent/", type: "docs", note: "Supervisor & hand-off patterns for sub-agents" },
+      { title: "Anthropic — Building effective agents", url: "https://www.anthropic.com/research/building-effective-agents", type: "article" },
+    ],
+  },
+  {
     id: "agentic-feature",
     pass: 2,
-    order: 11,
+    order: 13,
     repoPath: "pass-2/04-agentic-feature",
     title: "An Agentic Feature in a Real Product",
     objective:
-      "Add a multi-step, tool-using agent to a real UI — with the guardrails and human-in-the-loop touches that make agents safe to ship.",
+      "Add a multi-step, tool-using agent to a real UI — with the guardrails, sub-agents, and human-in-the-loop touches that make agents safe to ship.",
     topics: [
-      "Multi-step orchestration; when to reach for LangGraph.js",
-      "Tools that act on your app's data; validation of tool inputs",
+      "Multi-step orchestration with LangGraph.js; when a single agent vs a supervisor + sub-agents is the right shape",
+      "Tools that act on your app's data; validation of tool inputs (Zod)",
       "Human-in-the-loop confirmation for consequential actions",
       "Guardrails: step/cost limits, error recovery, observability hooks",
     ],
     build:
-      "An agentic feature inside your app (e.g. an assistant that can look things up and take a reversible action), with a confirmation step and hard limits.",
+      "An agentic feature inside your app (e.g. an assistant that can look things up and take a reversible action), with a confirmation step, hard limits, and — if it helps — one specialist sub-agent.",
     resources: [
       { title: "AI SDK — Agents & tool calling (docs)", url: "https://ai-sdk.dev/docs/foundations/agents", type: "docs" },
-      { title: "Anthropic — Building effective agents", url: "https://www.anthropic.com/research/building-effective-agents", type: "article" },
       { title: "LangGraph.js — documentation", url: "https://langchain-ai.github.io/langgraphjs/", type: "docs" },
+      { title: "Anthropic — Building effective agents", url: "https://www.anthropic.com/research/building-effective-agents", type: "article" },
     ],
   },
   {
     id: "mcp-for-product-devs",
     pass: 2,
-    order: 12,
+    order: 14,
     repoPath: "pass-2/05-mcp-for-product-devs",
     title: "MCP for Product Developers",
     objective:
-      "Understand the protocol that connects assistants to tools and data — by building a server that exposes your own app, in TypeScript.",
+      "Understand the protocol that connects assistants to tools and data — by building a server that exposes your own app, in TypeScript. (You compared APIs vs MCP conceptually in Pass 1; now build one.)",
     topics: [
       "What MCP is: tools, resources, and prompts, standardized",
       "Build an MCP server (TypeScript SDK) exposing app data/actions",
-      "Consuming MCP from Claude Code / other hosts",
-      "Clear tool descriptions and input validation so models use tools well",
+      "Consuming MCP from Claude Code / other hosts, and from the AI SDK",
+      "Clear tool descriptions and Zod-validated inputs so models use tools well",
+      "Note: in Python, FastMCP is the go-to for the same job — good to recognize when you read agent codebases",
     ],
     build:
       "An MCP server exposing 1–2 useful tools from your app (e.g. 'search my content', 'create an item'), wired into Claude Code.",
     resources: [
       { title: "Model Context Protocol — official site & docs", url: "https://modelcontextprotocol.io", type: "docs" },
       { title: "MCP TypeScript SDK (official GitHub)", url: "https://github.com/modelcontextprotocol/typescript-sdk", type: "docs" },
+      { title: "FastMCP — the Python equivalent (for reference)", url: "https://gofastmcp.com/", type: "docs", note: "You'll see this in most Python MCP servers" },
       { title: "Example MCP servers (reference implementations)", url: "https://github.com/modelcontextprotocol/servers", type: "docs" },
     ],
   },
   {
     id: "evals-observability-ai-ux",
     pass: 2,
-    order: 13,
+    order: 15,
     repoPath: "pass-2/06-evals-observability-ai-ux",
     title: "Evals, Observability & AI UX Quality",
     objective:
@@ -342,9 +396,34 @@ export const lessons: Lesson[] = [
     ],
   },
   {
+    id: "n8n-workflows",
+    pass: 2,
+    order: 16,
+    repoPath: "pass-2/09-n8n-workflows",
+    title: "Low-Code GenAI Workflows with n8n",
+    objective:
+      "Not everything should be a bespoke app. n8n lets you build LLM-powered automations visually — triggers, tool nodes, and AI-agent nodes — great for internal tooling and for wiring your own app's API or MCP server into a workflow without writing a new backend each time.",
+    topics: [
+      "What n8n is: node-based workflow automation (self-host or cloud); low-code as a complement to code, not a replacement",
+      "Core nodes: triggers (webhook / schedule / chat), HTTP Request, and data transforms",
+      "Advanced AI in n8n: the AI Agent node, chat-model nodes, tools, and memory",
+      "Connecting an LLM (Anthropic / OpenAI) and adding a retrieval or tool-using step",
+      "Calling your own Next.js API route or MCP server from a workflow",
+      "When to graduate a prototype from n8n to a real feature in your app",
+    ],
+    build:
+      "An n8n workflow that calls an LLM (with a tool or retrieval step) and hits one of your app's API routes — e.g. take an incoming message, classify it, and create a record via your API. Export the workflow JSON into this folder.",
+    resources: [
+      { title: "n8n — documentation", url: "https://docs.n8n.io/", type: "docs" },
+      { title: "n8n — Advanced AI (AI Agent, chat models, tools)", url: "https://docs.n8n.io/advanced-ai/", type: "docs" },
+      { title: "n8n — AI Agent node (reference)", url: "https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/", type: "docs" },
+      { title: "n8n — workflow templates gallery", url: "https://n8n.io/workflows/", type: "article", note: "Steal a GenAI workflow and adapt it" },
+    ],
+  },
+  {
     id: "deploy-perf-cost",
     pass: 2,
-    order: 14,
+    order: 17,
     repoPath: "pass-2/07-deploy-perf-cost",
     title: "Deploy, Performance & Cost",
     objective:
