@@ -143,6 +143,12 @@ Vercel's git integration attributes each deploy to the **commit author email** a
 - **Persona cards** state who-it's-for + starting assumptions + 3 highlights. Per owner feedback, the **current role and "→ AI Engineer" are equal weight** (both `text-lg` bold) — do not shrink the current-role back to a small eyebrow.
 - **Quiz** (`/find-your-path`): 4 questions, each option adds points to `{feengineer, biengineer, daengineer}`; highest wins, shows a runner-up. Scoring lives in that one client file — tweak weights there. It is NOT a curriculum track (not in `tracks`).
 
+## Track page flow (updated)
+- **`/[track]` when NOT connected now shows a full curriculum PREVIEW**, not just the connect card: track header + lesson count + a "Connect GitHub & start" CTA anchored to `#connect`, then both passes rendered with `LessonCard` in `preview` mode, then the `ConnectCard` (with the 422 "already exists" handling) in a `#connect` section at the bottom.
+- `LessonCard` takes a `preview?: boolean`: hides the `StatusPill` (shows a `→` chevron instead) and drops the next-up ring. Lessons are fully readable before connecting — the lesson pages never required a connection.
+- Connecting still lands on the SAME route rendering the dashboard (no explicit redirect — `connection` in localStorage flips the render). Preview branch lives in `src/app/[track]/page.tsx` `if (!connection)`.
+
 ## Known minor items
-- `favicon.ico` 404 in console (cosmetic; no favicon added yet).
-- Root-level `curriculum*.ts` copies are stale (see structure note).
+- ~~`favicon.ico` 404~~ — **fixed**: added `src/app/icon.svg` (indigo rounded square + white check). Next injects the `<link>`; a bare `/favicon.ico` hit may still 404 in dev, harmless.
+- ~~Root-level `curriculum*.ts` copies~~ — **deleted** (were unreferenced; app only reads `src/data/*`).
+- Metadata title is now "AI Engineering Tracker" (`src/app/layout.tsx`).
