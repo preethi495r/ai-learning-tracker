@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { notFound, useParams, useRouter, useSearchParams } from "next/navigation";
 import { getTrack, lessonsByPass, type TrackSlug } from "@/data/tracks";
@@ -88,50 +89,104 @@ export default function TrackPage() {
     );
   }
 
-  // ---- Not connected: connect card (+ any generation error / 422 offer) ----
+  // ---- Not connected: browse the full curriculum, then connect to start ----
   if (!connection) {
+    const total = track.lessons.length;
     return (
       <Shell>
-        {gen.kind === "error" && (
-          <div className="mx-auto mb-4 max-w-md rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-            {gen.message}
-          </div>
-        )}
-        {gen.kind === "exists" ? (
-          <div className="mx-auto max-w-md rounded-2xl border border-amber-200 bg-amber-50 p-6">
-            <h2 className="font-semibold text-slate-900">
-              That repo already exists
-            </h2>
-            <p className="mt-1 text-sm text-slate-600">
-              You already have{" "}
-              <span className="font-medium">
-                {gen.candidate.owner}/{gen.candidate.repo}
-              </span>
-              . Connect it and keep going?
-            </p>
-            <div className="mt-4 flex gap-3">
-              <button
-                onClick={() => {
-                  window.localStorage.removeItem(pendingKey(slug));
-                  connect(gen.candidate);
-                  setShowClone(true);
-                  setGen({ kind: "idle" });
-                }}
-                className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg hover:opacity-90"
-              >
-                Connect existing repo
-              </button>
-              <button
-                onClick={() => setGen({ kind: "idle" })}
-                className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
-              >
-                Pick a different name
-              </button>
+        <Link
+          href="/"
+          className="text-sm text-slate-500 underline-offset-2 hover:text-accent hover:underline"
+        >
+          ← All tracks
+        </Link>
+
+        <header className="mt-4 mb-8">
+          <p className="text-xs font-medium uppercase tracking-wide text-accent">
+            {track.label}
+          </p>
+          <h1 className="mt-1 text-2xl font-semibold text-slate-900">
+            {track.headline}
+          </h1>
+          <p className="mt-2 text-sm text-slate-600">
+            {total} lessons across two passes. Browse the full plan below, then
+            connect GitHub to create your repo and start tracking your progress.
+          </p>
+          <a
+            href="#connect"
+            className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-accent-fg hover:opacity-90"
+          >
+            Connect GitHub &amp; start
+            <span aria-hidden>→</span>
+          </a>
+        </header>
+
+        {([1, 2] as const).map((pass) => {
+          const passLessons = lessonsByPass(track, pass);
+          return (
+            <section key={pass} className="mb-8">
+              <h2 className="text-lg font-semibold text-slate-900">
+                {track.passes[pass].title}
+              </h2>
+              <p className="mb-4 mt-1 text-sm text-slate-600">
+                {track.passes[pass].blurb}
+              </p>
+              <div className="flex flex-col gap-3">
+                {passLessons.map((l) => (
+                  <LessonCard
+                    key={l.id}
+                    slug={slug}
+                    lesson={{ ...l, complete: false, isNext: false }}
+                    preview
+                  />
+                ))}
+              </div>
+            </section>
+          );
+        })}
+
+        <section id="connect" className="mt-12 scroll-mt-6 border-t border-slate-200 pt-10">
+          {gen.kind === "error" && (
+            <div className="mx-auto mb-4 max-w-md rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+              {gen.message}
             </div>
-          </div>
-        ) : (
-          <ConnectCard track={track} onManualConnect={connect} />
-        )}
+          )}
+          {gen.kind === "exists" ? (
+            <div className="mx-auto max-w-md rounded-2xl border border-amber-200 bg-amber-50 p-6">
+              <h2 className="font-semibold text-slate-900">
+                That repo already exists
+              </h2>
+              <p className="mt-1 text-sm text-slate-600">
+                You already have{" "}
+                <span className="font-medium">
+                  {gen.candidate.owner}/{gen.candidate.repo}
+                </span>
+                . Connect it and keep going?
+              </p>
+              <div className="mt-4 flex gap-3">
+                <button
+                  onClick={() => {
+                    window.localStorage.removeItem(pendingKey(slug));
+                    connect(gen.candidate);
+                    setShowClone(true);
+                    setGen({ kind: "idle" });
+                  }}
+                  className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg hover:opacity-90"
+                >
+                  Connect existing repo
+                </button>
+                <button
+                  onClick={() => setGen({ kind: "idle" })}
+                  className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                >
+                  Pick a different name
+                </button>
+              </div>
+            </div>
+          ) : (
+            <ConnectCard track={track} onManualConnect={connect} />
+          )}
+        </section>
       </Shell>
     );
   }

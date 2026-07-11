@@ -5,15 +5,20 @@ import { StatusPill } from "./StatusPill";
 export function LessonCard({
   slug,
   lesson,
+  preview = false,
 }: {
   slug: string;
   lesson: LessonState;
+  // Preview = browsing before connecting: no completion state to show.
+  preview?: boolean;
 }) {
   return (
     <Link
       href={`/${slug}/lesson/${lesson.id}`}
-      className={`block rounded-xl border bg-white p-4 shadow-card transition duration-200 hover:-translate-y-0.5 hover:border-accent hover:shadow-lift ${
-        lesson.isNext ? "border-accent ring-1 ring-accent/20" : "border-slate-200"
+      className={`group block rounded-xl border bg-white p-4 shadow-card transition duration-200 hover:-translate-y-0.5 hover:border-accent hover:shadow-lift ${
+        !preview && lesson.isNext
+          ? "border-accent ring-1 ring-accent/20"
+          : "border-slate-200"
       }`}
     >
       <div className="flex items-start justify-between gap-3">
@@ -28,7 +33,13 @@ export function LessonCard({
             <p className="mt-1 text-sm text-slate-600">{lesson.objective}</p>
           </div>
         </div>
-        <StatusPill complete={lesson.complete} isNext={lesson.isNext} />
+        {preview ? (
+          <span className="mt-0.5 shrink-0 text-slate-300 transition group-hover:text-accent" aria-hidden>
+            →
+          </span>
+        ) : (
+          <StatusPill complete={lesson.complete} isNext={lesson.isNext} />
+        )}
       </div>
       <div className="mt-3 pl-10 text-xs text-slate-400">
         {lesson.resources.length} resource
