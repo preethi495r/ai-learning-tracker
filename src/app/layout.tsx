@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { SupportFooter } from "@/components/SupportFooter";
 
 export const metadata: Metadata = {
   title: "AI Engineering Tracker",
@@ -13,7 +14,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        {children}
+        <SupportFooter />
+      </body>
     </html>
   );
 }
