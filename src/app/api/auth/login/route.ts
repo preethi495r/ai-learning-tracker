@@ -7,7 +7,7 @@ import { createHmac, randomUUID } from "crypto";
 
 export const runtime = "nodejs";
 
-const VALID_TRACKS = new Set(["feengineer", "biengineer", "daengineer"]);
+const VALID_TRACKS = new Set(["feengineer", "biengineer", "daengineer", "aipm"]);
 
 function redirectUri(req: NextRequest): string {
   if (process.env.OAUTH_REDIRECT_URI) return process.env.OAUTH_REDIRECT_URI;

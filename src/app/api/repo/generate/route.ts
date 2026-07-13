@@ -9,11 +9,12 @@ export const runtime = "nodejs";
 
 const TEMPLATE_ENV: Record<
   string,
-  "FRONTEND_TEMPLATE" | "BI_TEMPLATE" | "DA_TEMPLATE"
+  "FRONTEND_TEMPLATE" | "BI_TEMPLATE" | "DA_TEMPLATE" | "PM_TEMPLATE"
 > = {
   feengineer: "FRONTEND_TEMPLATE",
   biengineer: "BI_TEMPLATE",
   daengineer: "DA_TEMPLATE",
+  aipm: "PM_TEMPLATE",
 };
 
 const GH = { Accept: "application/vnd.github+json" };

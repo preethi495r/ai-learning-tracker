@@ -62,8 +62,9 @@ src/
 | feengineer    | curriculum-wife.ts  | fullstack-ai-journey     | FRONTEND_TEMPLATE   |
 | biengineer    | curriculum.ts       | ai-engineering-journey   | BI_TEMPLATE         |
 | daengineer    | curriculum-da.ts    | data-analyst-ai-journey  | DA_TEMPLATE         |
+| aipm          | curriculum-pm.ts    | ai-pm-journey            | PM_TEMPLATE         |
 
-> Slug note: the frontend track slug was renamed `frontendengineer` → **`feengineer`** (old path 404s). `daengineer` (Data Analyst → AI Engineer) was added later. `getTrack`/`tracks` live in `src/data/tracks.ts` (aliased imports of the three curriculum files).
+> Slug note: the frontend track slug was renamed `frontendengineer` → **`feengineer`** (old path 404s). `daengineer` (Data Analyst → AI Engineer) was added later, then **`aipm`** (Product Manager → AI Product Manager — the first track whose destination is NOT "AI Engineer"). `getTrack`/`tracks` live in `src/data/tracks.ts` (aliased imports of the four curriculum files).
 
 ## Env vars (Vercel, server-only unless noted)
 
@@ -74,6 +75,7 @@ OAUTH_STATE_SECRET
 FRONTEND_TEMPLATE=harigovind-s-menon/fullstack-ai-journey-template
 BI_TEMPLATE=harigovind-s-menon/ai-engineering-journey-template
 DA_TEMPLATE=harigovind-s-menon/data-analyst-ai-journey-template
+PM_TEMPLATE=harigovind-s-menon/ai-pm-journey-template
 OAUTH_REDIRECT_URI=https://ai-tracker-eight-ebon.vercel.app/api/auth/callback
 ```
 
@@ -122,11 +124,13 @@ Vercel's git integration attributes each deploy to the **commit author email** a
 - `fullstack-ai-journey-template` → FRONTEND_TEMPLATE (feengineer)
 - `ai-engineering-journey-template` → BI_TEMPLATE (biengineer)
 - `data-analyst-ai-journey-template` → DA_TEMPLATE (daengineer)
+- `ai-pm-journey-template` → PM_TEMPLATE (aipm) — 17 folders `pass-1/01-setup` … `pass-2/06-capstone`.
 - Each has one folder per lesson with a `notes.md` placeholder — **never `DONE.md`** (that would mark lessons complete). Adding a lesson = add its folder+notes.md to the matching template (via `gh api PUT .../contents/<path>/notes.md`). Zsh strips PATH inside loops here — set `export PATH=/opt/homebrew/bin:/usr/bin:/bin` and avoid functions, or run a `bash scriptfile`.
+- The `aipm` template + its `PM_TEMPLATE` Vercel env var are **owner-run outward-facing steps**: creating a public repo and editing prod env are gated by the auto-mode classifier. A ready-to-run script lives at (session scratchpad) `make-pm-template.sh` — it `gh repo create --public`, sets `is_template=true`, and PUTs all 17 `notes.md`. Run it yourself if the agent is blocked.
 
 ## Curriculum conventions (important for edits)
 - **`order` (integer) drives UI ordering**, not the folder name. So you can INSERT a lesson by giving it a new `order` and a fresh `repoPath` folder number **without renumbering existing folders** (avoids renaming template folders / breaking completion keys). Existing lesson `repoPath`s are stable identifiers — don't rename them.
-- Lesson counts (as of now): **biengineer 17, feengineer 17, daengineer 16.** Never hardcode counts — derive from data.
+- Lesson counts (as of now): **biengineer 17, feengineer 17, daengineer 16, aipm 17.** Never hardcode counts — derive from data.
 - Content added this session, across tracks:
   - **Pydantic** in Python core (biengineer/daengineer); Zod called out as its equivalent (feengineer).
   - **ReAct** made explicit in the simple-agent lessons (+ arxiv 2210.03629).
@@ -136,12 +140,14 @@ Vercel's git integration attributes each deploy to the **commit author email** a
   - New **n8n low-code GenAI workflows** lesson — all 3 tracks.
   - Sub-agents added to Claude Code + database/data-agent lessons.
 - **daengineer** persona: Data Analyst with Python + basic ML (classification/sklearn), lacking prompting & AI-workflow experience. Track leans on that: dedicated Prompt Engineering lesson, a "Classical ML → LLMs" bridge, a Data Analysis Agent capstone, evals as their edge, Streamlit-first deploy.
+- **aipm** persona (Product Managers, `curriculum-pm.ts`, 17 lessons): NO coding from scratch — *concept-fluency + implementation*. Each building block gets a plain-English "what it is / why it matters for product" + a hands-on build; Claude Code writes the plumbing, learner tweaks small snippets. Pass 1 = building blocks & first builds (prompting, model landscape + **OpenRouter**, vibe-coding, RAG, **ReAct** agent, **multi-agent**, **MCP**, **APIs-vs-MCP**, n8n); Pass 2 = ship & lead (direct Claude Code, evals, cost/risk, AI PRD, ship, capstone). Owner decisions: destination "AI Product Manager", **Product-only** (not PjM), light-code-OK, keep the 4 craft lessons + add the building-block concept lessons. Design rationale is in the plan file `~/.claude/plans/groovy-singing-eclipse.md`.
 
 ## Home + quiz (design decisions)
 - **Design system:** `globals.css` soft radial-gradient canvas; `tailwind.config.ts` adds `shadow-card`/`shadow-lift`, `animate-fade-up`, system font stack. Keep it clean/minimal (owner preference) — lift via subtle shadow + hover, not clutter.
-- **Per-track color identity:** feengineer=sky, biengineer=violet, daengineer=emerald, quiz/helper=amber. Class strings are written out in full (Tailwind JIT can't see dynamic concatenation).
-- **Persona cards** state who-it's-for + starting assumptions + 3 highlights. Per owner feedback, the **current role and "→ AI Engineer" are equal weight** (both `text-lg` bold) — do not shrink the current-role back to a small eyebrow.
-- **Quiz** (`/find-your-path`): 4 questions, each option adds points to `{feengineer, biengineer, daengineer}`; highest wins, shows a runner-up. Scoring lives in that one client file — tweak weights there. It is NOT a curriculum track (not in `tracks`).
+- **Per-track color identity:** feengineer=sky, biengineer=violet, daengineer=emerald, **aipm=rose**, quiz/helper=amber. Class strings are written out in full (Tailwind JIT can't see dynamic concatenation).
+- **Home** now shows **4 persona cards** (grid `sm:grid-cols-2 lg:grid-cols-4`). Because aipm's destination isn't "AI Engineer", the hero was softened: eyebrow "AI Career Tracks", headline "Move into AI, one lesson at a time".
+- **Persona cards** state who-it's-for + starting assumptions + 3 highlights. Per owner feedback, the **current role and the "→ …" destination are equal weight** (both `text-lg` bold) — do not shrink the current-role back to a small eyebrow.
+- **Quiz** (`/find-your-path`): now **5 questions**, each option adds points to `{feengineer, biengineer, daengineer, aipm}`; highest wins, shows a runner-up. PM routing = a "Product manager" background option + a "how hands-on with code" question (the "not at all, I'll direct AI and lead" option is the strong aipm signal) + a "prototype & lead AI features" build option. Scoring lives in that one client file. It is NOT a curriculum track (not in `tracks`).
 
 ## Track page flow (updated)
 - **`/[track]` when NOT connected now shows a full curriculum PREVIEW**, not just the connect card: track header + lesson count + a "Connect GitHub & start" CTA anchored to `#connect`, then both passes rendered with `LessonCard` in `preview` mode, then the `ConnectCard` (with the 422 "already exists" handling) in a `#connect` section at the bottom.

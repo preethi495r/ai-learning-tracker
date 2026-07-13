@@ -42,6 +42,19 @@ const CHOICES = [
     accent: "text-emerald-600",
     bar: "bg-emerald-500",
   },
+  {
+    href: "/aipm",
+    icon: "🚀",
+    from: "Product Manager",
+    to: "AI Product Manager",
+    persona: "You ship product with engineers and want hands-on fluency — not to become one.",
+    assumes: "Assumes: no coding needed. AI writes the code; you steer, build, and lead.",
+    highlights: ["Prompting · vibe-coding prototypes", "RAG · ReAct · multi-agent · MCP", "Evals · AI PRDs · ship a demo"],
+    ring: "hover:border-rose-300",
+    badge: "from-rose-500 to-pink-600",
+    accent: "text-rose-600",
+    bar: "bg-rose-500",
+  },
 ];
 
 const STEPS = [
@@ -56,10 +69,10 @@ export default function Home() {
       <header className="mb-12 text-center animate-fade-up">
         <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/70 px-3 py-1 text-xs font-medium uppercase tracking-wider text-slate-500 shadow-sm">
           <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-          AI Engineering Tracks
+          AI Career Tracks
         </span>
         <h1 className="mx-auto mt-5 max-w-2xl bg-gradient-to-br from-slate-900 to-slate-600 bg-clip-text text-4xl font-bold tracking-tight text-transparent sm:text-5xl">
-          Become an AI Engineer, one lesson at a time
+          Move into AI, one lesson at a time
         </h1>
         <p className="mx-auto mt-4 max-w-xl text-base text-slate-600">
           A guided, git-tracked path from where you are today to shipping real AI
@@ -68,7 +81,7 @@ export default function Home() {
         </p>
       </header>
 
-      <section className="grid gap-5 md:grid-cols-3">
+      <section className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {CHOICES.map((c) => (
           <Link
             key={c.href}

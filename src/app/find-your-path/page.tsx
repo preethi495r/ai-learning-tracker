@@ -6,10 +6,10 @@ import { useState } from "react";
 // A lightweight recommender: 4 questions, each option adds points to the three
 // tracks. Highest score wins. Pure client-side — no backend, matches the app's rule.
 
-type Slug = "feengineer" | "biengineer" | "daengineer";
+type Slug = "feengineer" | "biengineer" | "daengineer" | "aipm";
 type Scores = Record<Slug, number>;
 
-const zero: Scores = { feengineer: 0, biengineer: 0, daengineer: 0 };
+const zero: Scores = { feengineer: 0, biengineer: 0, daengineer: 0, aipm: 0 };
 
 interface Option {
   label: string;
@@ -27,7 +27,16 @@ const QUESTIONS: Question[] = [
       { label: "Frontend / web developer (React, UIs)", scores: { feengineer: 3 } },
       { label: "BI analyst — SQL, dashboards (Power BI / Tableau)", scores: { biengineer: 3 } },
       { label: "Data analyst who codes in Python", scores: { daengineer: 3 } },
+      { label: "Product manager — I ship product with engineers", scores: { aipm: 3 } },
       { label: "Something else / early in my journey", scores: { feengineer: 1, biengineer: 1, daengineer: 1 } },
+    ],
+  },
+  {
+    q: "How hands-on with code do you want to get?",
+    options: [
+      { label: "All the way — I want to write and understand the code", scores: { feengineer: 1, biengineer: 1, daengineer: 1 } },
+      { label: "A little — tweak things, but let AI write most of it", scores: { aipm: 2, daengineer: 1 } },
+      { label: "Not at all — I'll direct AI and lead, not code myself", scores: { aipm: 4 } },
     ],
   },
   {
@@ -35,7 +44,7 @@ const QUESTIONS: Question[] = [
     options: [
       { label: "Very — I use it regularly", scores: { daengineer: 3, biengineer: 1 } },
       { label: "Some — I can write basic scripts", scores: { biengineer: 2, daengineer: 1 } },
-      { label: "Little to none", scores: { biengineer: 2, feengineer: 2 } },
+      { label: "Little to none", scores: { biengineer: 1, feengineer: 1, aipm: 1 } },
     ],
   },
   {
@@ -46,11 +55,12 @@ const QUESTIONS: Question[] = [
     ],
   },
   {
-    q: "What are you most excited to build?",
+    q: "What are you most excited to do?",
     options: [
-      { label: "Slick, user-facing AI apps", scores: { feengineer: 3 } },
-      { label: "Answers & insights from data", scores: { biengineer: 2, daengineer: 1 } },
-      { label: "Agents that work over data & tools", scores: { daengineer: 2, biengineer: 1 } },
+      { label: "Build slick, user-facing AI apps", scores: { feengineer: 3 } },
+      { label: "Get answers & insights from data", scores: { biengineer: 2, daengineer: 1 } },
+      { label: "Build agents that work over data & tools", scores: { daengineer: 2, biengineer: 1 } },
+      { label: "Prototype & lead AI features for my team", scores: { aipm: 3 } },
     ],
   },
 ];
@@ -86,9 +96,18 @@ const TRACKS: Record<
     accent: "text-emerald-600",
     button: "bg-emerald-600 hover:bg-emerald-700",
   },
+  aipm: {
+    label: "Product Manager → AI Product Manager",
+    href: "/aipm",
+    icon: "🚀",
+    pitch: "No coding required — get hands-on fluency with prompting, RAG, agents, and MCP, then prototype, evaluate, and ship AI features you can lead with confidence.",
+    badge: "from-rose-500 to-pink-600",
+    accent: "text-rose-600",
+    button: "bg-rose-600 hover:bg-rose-700",
+  },
 };
 
-const ORDER: Slug[] = ["feengineer", "biengineer", "daengineer"];
+const ORDER: Slug[] = ["feengineer", "biengineer", "daengineer", "aipm"];
 
 function winner(scores: Scores): { top: Slug; runnerUp: Slug } {
   const ranked = [...ORDER].sort((a, b) => scores[b] - scores[a]);

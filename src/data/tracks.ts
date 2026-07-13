@@ -16,13 +16,17 @@ import {
   lessons as daLessons,
   PASSES as daPasses,
 } from "./curriculum-da";
+import {
+  lessons as pmLessons,
+  PASSES as pmPasses,
+} from "./curriculum-pm";
 
 export type { Lesson, Resource, ResourceType } from "./curriculum";
 
 // The single completion contract, shared by both tracks: `${repoPath}/DONE.md` exists.
 export const COMPLETION_MARKER = biMarker;
 
-export type TrackSlug = "feengineer" | "biengineer" | "daengineer";
+export type TrackSlug = "feengineer" | "biengineer" | "daengineer" | "aipm";
 
 export interface PassInfo {
   title: string;
@@ -37,7 +41,7 @@ export interface Track {
   // Keyed 1 | 2 — the two curricula use different pass titles, so keep this structural.
   passes: Record<1 | 2, PassInfo>;
   defaultRepoName: string;
-  templateEnvKey: "FRONTEND_TEMPLATE" | "BI_TEMPLATE" | "DA_TEMPLATE";
+  templateEnvKey: "FRONTEND_TEMPLATE" | "BI_TEMPLATE" | "DA_TEMPLATE" | "PM_TEMPLATE";
 }
 
 export const tracks: Track[] = [
@@ -67,6 +71,15 @@ export const tracks: Track[] = [
     passes: daPasses,
     defaultRepoName: "data-analyst-ai-journey",
     templateEnvKey: "DA_TEMPLATE",
+  },
+  {
+    slug: "aipm",
+    label: "AI Product Manager",
+    headline: "Your Product Manager → AI PM journey",
+    lessons: pmLessons,
+    passes: pmPasses,
+    defaultRepoName: "ai-pm-journey",
+    templateEnvKey: "PM_TEMPLATE",
   },
 ];
 
