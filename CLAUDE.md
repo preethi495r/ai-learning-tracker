@@ -124,9 +124,10 @@ Vercel's git integration attributes each deploy to the **commit author email** a
 - `fullstack-ai-journey-template` → FRONTEND_TEMPLATE (feengineer)
 - `ai-engineering-journey-template` → BI_TEMPLATE (biengineer)
 - `data-analyst-ai-journey-template` → DA_TEMPLATE (daengineer)
-- `ai-pm-journey-template` → PM_TEMPLATE (aipm) — 18 folders `pass-1/01-setup` … `pass-2/07-capstone`.
+- `ai-pm-journey-template` → PM_TEMPLATE (aipm) — **created & populated** (public, template flag ON), 18 folders `pass-1/01-setup` … `pass-2/07-capstone`, each with a `notes.md`.
 - Each has one folder per lesson with a `notes.md` placeholder — **never `DONE.md`** (that would mark lessons complete). Adding a lesson = add its folder+notes.md to the matching template (via `gh api PUT .../contents/<path>/notes.md`). Zsh strips PATH inside loops here — set `export PATH=/opt/homebrew/bin:/usr/bin:/bin` and avoid functions, or run a `bash scriptfile`.
-- The `aipm` template + its `PM_TEMPLATE` Vercel env var are **owner-run outward-facing steps**: creating a public repo and editing prod env are gated by the auto-mode classifier. A ready-to-run script lives at (session scratchpad) `make-pm-template.sh` — it `gh repo create --public`, sets `is_template=true`, and PUTs all 17 `notes.md`. Run it yourself if the agent is blocked.
+- The `ai-pm-journey-template` repo is **done** (created via the session-scratchpad `make-pm-template.sh`, which `gh repo create --public`, sets `is_template=true`, and PUTs all 18 `notes.md`). Re-run that script to add future lesson folders.
+- ⚠️ **Still pending — `PM_TEMPLATE` in Vercel Production.** `.env.local` has it, but the prod env var was NOT added (the auto-mode classifier gates production config writes). Until it's set, `/aipm` **Connect GitHub** repo-generation will fail in prod (the browse/preview + quiz already work). Add it via the Vercel dashboard (Settings → Environment Variables → `PM_TEMPLATE=harigovind-s-menon/ai-pm-journey-template`, Production) then redeploy, or run outside auto mode: `printf 'harigovind-s-menon/ai-pm-journey-template' | vercel env add PM_TEMPLATE production` (needs `NODE_EXTRA_CA_CERTS`).
 
 ## Curriculum conventions (important for edits)
 - **`order` (integer) drives UI ordering**, not the folder name. So you can INSERT a lesson by giving it a new `order` and a fresh `repoPath` folder number **without renumbering existing folders** (avoids renaming template folders / breaking completion keys). Existing lesson `repoPath`s are stable identifiers — don't rename them.
