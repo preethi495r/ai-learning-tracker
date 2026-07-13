@@ -114,10 +114,10 @@ export default function TrackPage() {
           </p>
           <a
             href="#connect"
-            className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-accent-fg hover:opacity-90"
+            className="group mt-4 inline-flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-accent-fg shadow-card transition-all duration-200 ease-snap hover:-translate-y-0.5 hover:shadow-lift active:translate-y-0 active:duration-100"
           >
             Connect GitHub &amp; start
-            <span aria-hidden>→</span>
+            <span className="transition-transform duration-200 ease-snap group-hover:translate-x-0.5" aria-hidden>→</span>
           </a>
         </header>
 
@@ -240,9 +240,10 @@ export default function TrackPage() {
           <p className="mt-1 text-sm text-slate-600">{current.objective}</p>
           <a
             href={`/${slug}/lesson/${current.id}`}
-            className="mt-3 inline-block rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg hover:opacity-90"
+            className="group mt-3 inline-flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg shadow-card transition-all duration-200 ease-snap hover:-translate-y-0.5 hover:shadow-lift active:translate-y-0 active:duration-100"
           >
-            Open lesson →
+            Open lesson
+            <span className="transition-transform duration-200 ease-snap group-hover:translate-x-0.5" aria-hidden>→</span>
           </a>
         </section>
       )}

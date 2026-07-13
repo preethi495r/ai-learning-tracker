@@ -7,15 +7,52 @@
 }
 
 body {
-  @apply text-slate-900 antialiased;
+  @apply font-sans text-slate-900 antialiased;
   min-height: 100vh;
   background-color: #f8fafc;
+  /* One calm, cohesive wash rather than two competing blobs — the tint
+     sits behind the content and fades out before it reaches the text. */
   background-image:
-    radial-gradient(48rem 48rem at 108% -8%, rgba(99, 102, 241, 0.1), transparent 60%),
-    radial-gradient(42rem 42rem at -8% 4%, rgba(16, 185, 129, 0.08), transparent 55%);
+    radial-gradient(60rem 60rem at 100% -10%, rgba(79, 70, 229, 0.08), transparent 60%),
+    radial-gradient(50rem 50rem at -10% 8%, rgba(16, 185, 129, 0.05), transparent 55%);
   background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 ::selection {
   background: rgba(79, 70, 229, 0.18);
+}
+
+/* One consistent, visible keyboard focus ring across every interactive
+   element — replaces the browser default without ever removing it. */
+:focus-visible {
+  outline: 2px solid rgba(79, 70, 229, 0.55);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Staggered entrance: children reveal in sequence for a lively, deliberate
+   load. Applied via `.stagger` on a container; each child animates fade-up. */
+.stagger > * {
+  animation: fade-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.stagger > *:nth-child(1) { animation-delay: 0.04s; }
+.stagger > *:nth-child(2) { animation-delay: 0.09s; }
+.stagger > *:nth-child(3) { animation-delay: 0.14s; }
+.stagger > *:nth-child(4) { animation-delay: 0.19s; }
+.stagger > *:nth-child(5) { animation-delay: 0.24s; }
+.stagger > *:nth-child(6) { animation-delay: 0.29s; }
+
+/* Motion is an enhancement, never a gate on content. When the user prefers
+   reduced motion, everything simply appears. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

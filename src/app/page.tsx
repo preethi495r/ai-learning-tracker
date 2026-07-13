@@ -71,22 +71,22 @@ export default function Home() {
           <span className="h-1.5 w-1.5 rounded-full bg-accent" />
           AI Career Tracks
         </span>
-        <h1 className="mx-auto mt-5 max-w-2xl bg-gradient-to-br from-slate-900 to-slate-600 bg-clip-text text-4xl font-bold tracking-tight text-transparent sm:text-5xl">
+        <h1 className="mx-auto mt-5 max-w-2xl text-balance text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">
           Move into AI, one lesson at a time
         </h1>
-        <p className="mx-auto mt-4 max-w-xl text-base text-slate-600">
+        <p className="mx-auto mt-4 max-w-xl text-pretty text-base text-slate-600">
           A guided, git-tracked path from where you are today to shipping real AI
           products. Pick the track that matches your background — or let us
           recommend one.
         </p>
       </header>
 
-      <section className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="stagger grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {CHOICES.map((c) => (
           <Link
             key={c.href}
             href={c.href}
-            className={`group relative flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-card transition duration-200 hover:-translate-y-1 hover:shadow-lift ${c.ring}`}
+            className={`group relative flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-card transition-all duration-300 ease-snap hover:-translate-y-1.5 hover:border-slate-300 hover:shadow-lift active:translate-y-0 active:duration-100 ${c.ring}`}
           >
             <span className={`absolute inset-x-0 top-0 h-1 ${c.bar}`} />
             <div
@@ -114,9 +114,9 @@ export default function Home() {
               ))}
             </ul>
             <p className="mt-4 text-xs text-slate-400">{c.assumes}</p>
-            <span className={`mt-5 inline-flex items-center gap-1 text-sm font-semibold ${c.accent}`}>
+            <span className={`mt-auto inline-flex items-center gap-1 pt-6 text-sm font-semibold ${c.accent}`}>
               Start this track
-              <span className="transition-transform group-hover:translate-x-0.5" aria-hidden>→</span>
+              <span className="transition-transform duration-200 ease-snap group-hover:translate-x-0.5" aria-hidden>→</span>
             </span>
           </Link>
         ))}
@@ -136,7 +136,7 @@ export default function Home() {
                 Not sure which fits?
               </h2>
               <p className="text-sm text-slate-600">
-                Answer 4 quick questions and we&apos;ll recommend your ideal track.
+                Answer 5 quick questions and we&apos;ll recommend your ideal track.
               </p>
             </div>
           </div>

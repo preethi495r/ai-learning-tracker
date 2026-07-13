@@ -185,10 +185,10 @@ export default function FindYourPath() {
               <button
                 key={opt.label}
                 onClick={() => choose(opt, i)}
-                className="group flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-left text-sm font-medium text-slate-700 transition hover:-translate-y-0.5 hover:border-accent hover:shadow-card"
+                className="group flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-left text-sm font-medium text-slate-700 transition-all duration-200 ease-snap hover:-translate-y-0.5 hover:border-accent hover:shadow-card active:translate-y-0 active:duration-100"
               >
                 {opt.label}
-                <span className="text-slate-300 transition group-hover:translate-x-0.5 group-hover:text-accent" aria-hidden>
+                <span className="text-slate-300 transition-transform duration-200 ease-snap group-hover:translate-x-0.5 group-hover:text-accent" aria-hidden>
                   →
                 </span>
               </button>
@@ -233,10 +233,10 @@ function Result({ scores, onRestart }: { scores: Scores; onRestart: () => void }
           <p className="text-slate-600">{t.pitch}</p>
           <Link
             href={t.href}
-            className={`mt-5 inline-flex items-center gap-1.5 rounded-lg px-5 py-2.5 text-sm font-semibold text-white transition ${t.button}`}
+            className={`group mt-5 inline-flex items-center gap-1.5 rounded-lg px-5 py-2.5 text-sm font-semibold text-white shadow-card transition-all duration-200 ease-snap hover:-translate-y-0.5 hover:shadow-lift active:translate-y-0 active:duration-100 ${t.button}`}
           >
             Start {t.label.split(" → ")[0]}&apos;s track
-            <span aria-hidden>→</span>
+            <span className="transition-transform duration-200 ease-snap group-hover:translate-x-0.5" aria-hidden>→</span>
           </Link>
         </div>
       </div>

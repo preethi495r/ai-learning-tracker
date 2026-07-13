@@ -15,7 +15,7 @@ export function LessonCard({
   return (
     <Link
       href={`/${slug}/lesson/${lesson.id}`}
-      className={`group block rounded-xl border bg-white p-4 shadow-card transition duration-200 hover:-translate-y-0.5 hover:border-accent hover:shadow-lift ${
+      className={`group block rounded-xl border bg-white p-4 shadow-card transition-all duration-300 ease-snap hover:-translate-y-0.5 hover:border-accent hover:shadow-lift active:translate-y-0 active:duration-100 ${
         !preview && lesson.isNext
           ? "border-accent ring-1 ring-accent/20"
           : "border-slate-200"
