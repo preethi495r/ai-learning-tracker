@@ -124,13 +124,13 @@ Vercel's git integration attributes each deploy to the **commit author email** a
 - `fullstack-ai-journey-template` → FRONTEND_TEMPLATE (feengineer)
 - `ai-engineering-journey-template` → BI_TEMPLATE (biengineer)
 - `data-analyst-ai-journey-template` → DA_TEMPLATE (daengineer)
-- `ai-pm-journey-template` → PM_TEMPLATE (aipm) — 17 folders `pass-1/01-setup` … `pass-2/06-capstone`.
+- `ai-pm-journey-template` → PM_TEMPLATE (aipm) — 18 folders `pass-1/01-setup` … `pass-2/07-capstone`.
 - Each has one folder per lesson with a `notes.md` placeholder — **never `DONE.md`** (that would mark lessons complete). Adding a lesson = add its folder+notes.md to the matching template (via `gh api PUT .../contents/<path>/notes.md`). Zsh strips PATH inside loops here — set `export PATH=/opt/homebrew/bin:/usr/bin:/bin` and avoid functions, or run a `bash scriptfile`.
 - The `aipm` template + its `PM_TEMPLATE` Vercel env var are **owner-run outward-facing steps**: creating a public repo and editing prod env are gated by the auto-mode classifier. A ready-to-run script lives at (session scratchpad) `make-pm-template.sh` — it `gh repo create --public`, sets `is_template=true`, and PUTs all 17 `notes.md`. Run it yourself if the agent is blocked.
 
 ## Curriculum conventions (important for edits)
 - **`order` (integer) drives UI ordering**, not the folder name. So you can INSERT a lesson by giving it a new `order` and a fresh `repoPath` folder number **without renumbering existing folders** (avoids renaming template folders / breaking completion keys). Existing lesson `repoPath`s are stable identifiers — don't rename them.
-- Lesson counts (as of now): **biengineer 17, feengineer 17, daengineer 16, aipm 17.** Never hardcode counts — derive from data.
+- Lesson counts (as of now): **biengineer 17, feengineer 17, daengineer 16, aipm 18.** Never hardcode counts — derive from data.
 - Content added this session, across tracks:
   - **Pydantic** in Python core (biengineer/daengineer); Zod called out as its equivalent (feengineer).
   - **ReAct** made explicit in the simple-agent lessons (+ arxiv 2210.03629).
@@ -140,7 +140,7 @@ Vercel's git integration attributes each deploy to the **commit author email** a
   - New **n8n low-code GenAI workflows** lesson — all 3 tracks.
   - Sub-agents added to Claude Code + database/data-agent lessons.
 - **daengineer** persona: Data Analyst with Python + basic ML (classification/sklearn), lacking prompting & AI-workflow experience. Track leans on that: dedicated Prompt Engineering lesson, a "Classical ML → LLMs" bridge, a Data Analysis Agent capstone, evals as their edge, Streamlit-first deploy.
-- **aipm** persona (Product Managers, `curriculum-pm.ts`, 17 lessons): NO coding from scratch — *concept-fluency + implementation*. Each building block gets a plain-English "what it is / why it matters for product" + a hands-on build; Claude Code writes the plumbing, learner tweaks small snippets. Pass 1 = building blocks & first builds (prompting, model landscape + **OpenRouter**, vibe-coding, RAG, **ReAct** agent, **multi-agent**, **MCP**, **APIs-vs-MCP**, n8n); Pass 2 = ship & lead (direct Claude Code, evals, cost/risk, AI PRD, ship, capstone). Owner decisions: destination "AI Product Manager", **Product-only** (not PjM), light-code-OK, keep the 4 craft lessons + add the building-block concept lessons. Design rationale is in the plan file `~/.claude/plans/groovy-singing-eclipse.md`.
+- **aipm** persona (Product Managers, `curriculum-pm.ts`, 18 lessons): NO coding from scratch — *concept-fluency + implementation*. Each building block gets a plain-English "what it is / why it matters for product" + a hands-on build; Claude Code writes the plumbing, learner tweaks small snippets. Pass 1 = building blocks & first builds (prompting, model landscape + **OpenRouter**, vibe-coding, RAG, **ReAct** agent, **multi-agent**, **MCP**, **APIs-vs-MCP**, n8n); Pass 2 = ship & lead (direct Claude Code, **driving-agents: hooks/skills/agent-runtimes**, evals, cost/risk, AI PRD, ship, capstone). Owner decisions: destination "AI Product Manager", **Product-only** (not PjM), light-code-OK, keep the 4 craft lessons + add the building-block concept lessons. The **driving-agents** lesson (added per owner: "functionalities to really drive AI projects") covers Claude Code **hooks**, memory/skills, permissions/guardrails, agent runtimes **OpenClaw** & **Hermes** (both real, post-2026-cutoff — verified via web search), and prompt-injection governance. Design rationale is in the plan file `~/.claude/plans/groovy-singing-eclipse.md`.
 
 ## Home + quiz (design decisions)
 - **Design system:** `globals.css` soft radial-gradient canvas; `tailwind.config.ts` adds `shadow-card`/`shadow-lift`, `animate-fade-up`, system font stack. Keep it clean/minimal (owner preference) — lift via subtle shadow + hover, not clutter.

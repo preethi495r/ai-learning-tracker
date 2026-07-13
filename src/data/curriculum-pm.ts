@@ -50,7 +50,7 @@ export const PASSES = {
 } as const;
 
 // Your edge to lean on: a PM who can prototype an AI feature, prove it's good with an eval,
-// and write the spec is rare. The craft lessons (13–17) are where that edge compounds.
+// and write the spec is rare. The Pass 2 craft lessons are where that edge compounds.
 
 export const lessons: Lesson[] = [
   // ────────────────────────────── PASS 1 ──────────────────────────────
@@ -337,10 +337,34 @@ export const lessons: Lesson[] = [
     ],
   },
   {
-    id: "evals",
+    id: "driving-agents",
     pass: 2,
     order: 13,
-    repoPath: "pass-2/02-evals",
+    repoPath: "pass-2/02-driving-agents",
+    title: "Driving Agents: Hooks, Skills & Agent Runtimes",
+    objective:
+      "Learn the operational levers that turn a demo agent into a governed, reliable system you can run a real project on — the functionalities that let you DRIVE AI work, not just prototype it.",
+    topics: [
+      "Hooks: automated behaviors that fire on events (e.g. Claude Code hooks that run a command before/after a tool call) to enforce rules, add guardrails, format output, notify, or block risky actions — behavior you configure, not prompt",
+      "Memory & skills: persistent context (CLAUDE.md) and self-improving skill files (like Hermes' SKILL.md) so agents get measurably better at your workflows over time",
+      "Permissions & guardrails: scoping what an agent may touch, approval gates, and the security surface you own",
+      "Agent runtimes / platforms: self-hosted personal agents — OpenClaw (connects an LLM to your channels, files, shell, and APIs) and Hermes (Nous Research; reliable tool-calling, model-agnostic via OpenRouter, persistent memory) — and when a PM would reach for one",
+      "Governance for real adoption: prompt injection, over-broad permissions, and data exposure — the questions to answer before rolling an agent out to a team",
+    ],
+    build:
+      "Configure one behavior-driving control yourself: add a Claude Code hook (a command that runs before/after a tool use), OR stand up a small OpenClaw or Hermes agent with a scoped permission and a memory/skill file. Then write a short note in this folder — what behavior you enforced, and one governance risk you'd flag before a team rollout.",
+    resources: [
+      { title: "Claude Code — Hooks (docs)", url: "https://code.claude.com/docs/en/hooks", type: "docs", note: "Run commands on agent events to drive behavior" },
+      { title: "OpenClaw — your own personal AI agent", url: "https://openclaw.ai/", type: "docs", note: "Open-source local agent across your channels, files, and tools" },
+      { title: "Hermes Agent (Nous Research)", url: "https://hermes-agent.org/", type: "docs", note: "Self-hosted agent: reliable tool-calling + persistent SKILL.md memory" },
+      { title: "OWASP — LLM01: Prompt Injection", url: "https://genai.owasp.org/llmrisk/llm01-prompt-injection/", type: "article", note: "The top risk once an agent can act in your stack" },
+    ],
+  },
+  {
+    id: "evals",
+    pass: 2,
+    order: 14,
+    repoPath: "pass-2/03-evals",
     title: "Is It Any Good? Evals for PMs",
     objective:
       "Your genuine edge. Learn to define and measure AI quality so 'it feels better' becomes 'it improved 18% on our test set.'",
@@ -363,8 +387,8 @@ export const lessons: Lesson[] = [
   {
     id: "cost-risk",
     pass: 2,
-    order: 14,
-    repoPath: "pass-2/03-cost-risk",
+    order: 15,
+    repoPath: "pass-2/04-cost-risk",
     title: "Cost, Latency, Safety & Risk",
     objective:
       "Scope AI features responsibly — the questions leadership and engineers will ask, answered by you.",
@@ -386,8 +410,8 @@ export const lessons: Lesson[] = [
   {
     id: "ai-prd",
     pass: 2,
-    order: 15,
-    repoPath: "pass-2/04-ai-prd",
+    order: 16,
+    repoPath: "pass-2/05-ai-prd",
     title: "Writing the AI PRD / Spec",
     objective:
       "Produce an implementation-informed spec an engineering team could actually build from — using everything you now understand.",
@@ -398,7 +422,7 @@ export const lessons: Lesson[] = [
       "Success metrics that include quality, not just usage",
     ],
     build:
-      "A complete AI-feature PRD in this folder for the idea you've been developing, with an evals section (reuse lesson 13) and a cost/risk section (reuse lesson 14).",
+      "A complete AI-feature PRD in this folder for the idea you've been developing, with an evals section (reuse your eval sheet) and a cost/risk section (reuse your feasibility brief).",
     resources: [
       { title: "Anthropic — Define your success criteria", url: "https://docs.claude.com/en/docs/test-and-evaluate/define-success", type: "docs" },
       { title: "Lenny's Newsletter — How the best PMs are using AI", url: "https://www.lennysnewsletter.com/p/how-the-best-product-managers-are-using-ai", type: "article" },
@@ -408,8 +432,8 @@ export const lessons: Lesson[] = [
   {
     id: "ship",
     pass: 2,
-    order: 16,
-    repoPath: "pass-2/05-ship",
+    order: 17,
+    repoPath: "pass-2/06-ship",
     title: "Ship & Share Your Prototype",
     objective:
       "Get a real, clickable URL other people can use — the difference between a demo and a decision.",
@@ -430,8 +454,8 @@ export const lessons: Lesson[] = [
   {
     id: "capstone",
     pass: 2,
-    order: 17,
-    repoPath: "pass-2/06-capstone",
+    order: 18,
+    repoPath: "pass-2/07-capstone",
     title: "Capstone — Lead a Mini AI Product",
     objective:
       "Put it together the way you'll actually work: prototype → measure → spec → ship. A portfolio piece that shows you can lead an AI product end to end.",
